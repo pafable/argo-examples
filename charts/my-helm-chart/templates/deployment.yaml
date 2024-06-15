@@ -1,43 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{ if eq .Values.app.env.NODE_ENV "development" -}}
-  name: {{ .Values.app.name }}-dev
-  {{ else if eq .Values.app.env.NODE_ENV "production" -}}
-  name: {{ .Values.app.name }}-prod
-  {{ else }}
-  {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
-  {{ end }}
+  name: {{ include "my-app.name" . }}-deployment
   namespace: {{ include  "my-app.namespace" . }}
   labels:
-    {{ if eq .Values.app.env.NODE_ENV "development" -}}
-    app.kubernetes.io/name: {{ .Values.app.name }}-dev
-    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
-    app.kubernetes.io/name: {{ .Values.app.name }}-prod
-    {{ else }}
-    {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
-    {{ end }}
+    app.kubernetes.io/name: {{ include "my-app.name" . }}
 spec:
   replicas: {{ .Values.app.replicas }}
   selector:
     matchLabels:
-      {{ if eq .Values.app.env.NODE_ENV "development" -}}
-      app.kubernetes.io/name: {{ .Values.app.name }}-dev
-      {{ else if eq .Values.app.env.NODE_ENV "production" -}}
-      app.kubernetes.io/name: {{ .Values.app.name }}-prod
-      {{ else }}
-      {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
-      {{ end }}
+      app.kubernetes.io/name: {{ include "my-app.name" . }}
   template:
     metadata:
       labels:
-        {{ if eq .Values.app.env.NODE_ENV "development" -}}
-        app.kubernetes.io/name: {{ .Values.app.name }}-dev
-        {{ else if eq .Values.app.env.NODE_ENV "production" -}}
-        app.kubernetes.io/name: {{ .Values.app.name }}-prod
-        {{ else }}
-        {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
-        {{ end }}
+        app.kubernetes.io/name: {{ include "my-app.name" . }}
     spec:
       containers:
       - name: ghost
