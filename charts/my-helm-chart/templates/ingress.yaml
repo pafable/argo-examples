@@ -34,5 +34,12 @@ spec:
             backend:
               service:
                 name: {{ .Values.app.name }}-svc
+                {{ if eq .Values.app.env.NODE_ENV "development" -}}
+                name: {{ .Values.app.name }}-svc-dev
+                {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+                name: {{ .Values.app.name }}-svc-prod
+                {{ else }}
+                {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+                {{ end }}
                 port:
                   number: 80
