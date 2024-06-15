@@ -26,7 +26,13 @@ metadata:
 spec:
   ingressClassName: {{ include "my-app.ingressClassName" . }}
   rules:
-    - host: {{ .Values.app.name }}.local
+    {{ if eq .Values.app.env.NODE_ENV "development" -}}
+    - host: {{ .Values.app.name }}-dev.local
+    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+    - host: {{ .Values.app.name }}-prod-local
+    {{ else }}
+    {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+    {{ end }}
       http:
         paths:
           - path: /
