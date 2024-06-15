@@ -4,16 +4,16 @@ metadata:
   name: {{- include "my-app.name" . }}-deployment
   namespace: {{- include  "my-app.namespace" . }}
   labels:
-    app: {{- include "my-app.name" . }}
+    "app.kubernetes.io/name": {{- include "my-app.name" . }}
 spec:
   replicas: {{- .Values.app.replicas }}
   selector:
     matchLabels:
-      app: {{- include "my-app.name" . }}
+      "app.kubernetes.io/name": {{- include "my-app.name" . }}
   template:
     metadata:
       labels:
-        app: {{- include "my-app.name" . }}
+        app.kubernetes.io/name: {{- include "my-app.name" . }}
     spec:
       containers:
       - name: ghost
