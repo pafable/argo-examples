@@ -27,9 +27,9 @@ spec:
   ingressClassName: {{ include "my-app.ingressClassName" . }}
   rules:
     {{ if eq .Values.app.env.NODE_ENV "development" -}}
-    - host: {{ .Values.app.name }}-dev.local
+    - host: {{ .Values.app.name }}.dev.local
     {{ else if eq .Values.app.env.NODE_ENV "production" -}}
-    - host: {{ .Values.app.name }}-prod-local
+    - host: {{ .Values.app.name }}.prod-local
     {{ else }}
     {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
     {{ end }}
