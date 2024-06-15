@@ -1,16 +1,35 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "my-app.name" . }}-svc
+  {{ if eq .Values.app.env.NODE_ENV "development" -}}
+  name: {{ .Values.app.name }}-svc-dev
+  {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+  name: {{ .Values.app.name }}-svc-prod
+  {{ else }}
+  {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+  {{ end }}
   namespace: {{ include  "my-app.namespace" . }}
   labels:
-    app.kubernetes.io/name: {{ include "my-app.name" . }}
-    jobLabel: {{ include "my-app.name" . }}
+    {{ if eq .Values.app.env.NODE_ENV "development" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-dev
+    jobLabel: {{ .Values.app.name }}-dev
+    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-prod
+    jobLabel: {{ .Values.app.name }}-prod
+    {{ else }}
+    {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+    {{ end }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ include "my-app.name" . }}
+    {{ if eq .Values.app.env.NODE_ENV "development" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-dev
+    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-prod
+    {{ else }}
+    {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+    {{ end }}
   ports:
-    - name: {{ include "my-app.name" . }}-port
+    - name: {{ .Values.app.name }}-port
       protocol: TCP
       port: 80
       targetPort: {{ .Values.app.port }}
