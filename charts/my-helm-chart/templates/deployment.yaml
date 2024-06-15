@@ -1,7 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.app.name }}
+  {{ if eq .Values.app.env.NODE_ENV "development" -}}
+  name: {{ .Values.app.name }}-dev
+  {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+  name: {{ .Values.app.name }}-prod
+  {{ else }}
+  {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+  {{ end }}
   namespace: {{ include  "my-app.namespace" . }}
   labels:
     {{ if eq .Values.app.env.NODE_ENV "development" -}}
