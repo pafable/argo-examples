@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-deployment
+  namespace: {{ include  "my-app.namespace" . }}
+  labels:
+    {{ if eq .Values.app.env.NODE_ENV "development" -}}
+    app: {{ .Values.app.name }}-dev
+    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+    app: {{ .Values.app.name }}-prod
+    {{ else }}
+      {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+    {{ end }}
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: ghost
+        image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
+        env:
+          - name: NODE_ENV
+            value: {{ .Values.app.env.NODE_ENV }}
+        ports:
+        - name: ghost
+          containerPort: {{ .Values.app.port }}
