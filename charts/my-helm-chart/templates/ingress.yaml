@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.name }}-ingress
+  namespace: {{ include  "my-app.namespace" . }}
+  labels:
+    {{ if eq .Values.app.env.NODE_ENV "development" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-dev
+    jobLabel: {{ .Values.app.name }}-dev
+    {{ else if eq .Values.app.env.NODE_ENV "production" -}}
+    app.kubernetes.io/name: {{ .Values.app.name }}-prod
+    jobLabel: {{ .Values.app.name }}-prod
+    {{ else }}
+    {{ fail "Entry in .Values.app.env.NODE_ENV is not recognized" }}
+    {{ end }}
+  annotations:
+    konghq.com/https-redirect-status-code: '301'
+    konghq.com/protocols: 'https'
+    konghq.com/strip-path: 'true'
+spec:
+  ingressClassName: {{ include "my-app.ingressClassName" . }}
+  rules:
+    - host: {{ .Values.app.name }}.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Values.app.name }}-svc
+                port:
+                  number: {{ .Values.app.port }}

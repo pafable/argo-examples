@@ -8,4 +8,6 @@ app:
     tag: 5.82.2
   port: 2368
 
-  namespaceOverride: ""
+ingressClassName: kong
+
+namespaceOverride: ""
