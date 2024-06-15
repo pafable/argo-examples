@@ -9,7 +9,7 @@ spec:
   replicas: {{- .Values.app.replicas }}
   selector:
     matchLabels:
-      "app.kubernetes.io/name": {{- include "my-app.name" . }}
+      app.kubernetes.io/name: {{- include "my-app.name" . }}
   template:
     metadata:
       labels:
