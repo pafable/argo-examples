@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.appName }}-ingress
+  annotations:
+    konghq.com/https-redirect-status-code: '301'
+    konghq.com/protocols: 'https'
+    konghq.com/strip-path: 'true'
+spec:
+  ingressClassName: kong
+  rules:
+    - host: {{ .Values.appName }}.dev.local
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Values.appName }}
+                port:
+                  number: 80
